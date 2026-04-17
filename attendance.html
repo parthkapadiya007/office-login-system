@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="user-header">
+        <h2 id="welcome"></h2>
+        <button id="logoutBtn" onclick="logout()" class="logout-btn">
+            Logout
+        </button>
+    </div>
+
+    <div class="warning-message">
+        <p>!! IMPORTANT: IN-OUT marking is mandatory, otherwise your leave will be marked !!</p>
+    </div>
+
+    <h3 id="currentTime"></h3>
+
+    <div class="status-box">
+        <p>IN Time: <span id="inTime">--</span></p>
+        <p>OUT Time: <span id="outTime">--</span></p>
+    </div>
+
+    <button id="inBtn" onclick="markIn()">MARK IN</button>
+
+    <button id="outBtn" onclick="markOut()" style="display:none;">
+        MARK OUT
+    </button>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
