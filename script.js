@@ -1,21 +1,7 @@
 // ================= FIREBASE CONFIG (DISABLED FOR NOW) =================
-// Firebase temporarily disabled - using local storage only
+// Firebase completely removed - using local storage only
 let db = null;
-try {
-    const firebaseConfig = {
-        apiKey: "AIzaSyDemoKeyForEmployeeAccessSystem",
-        authDomain: "employee-access-system-c81cb.firebaseapp.com",
-        projectId: "employee-access-system-c81cb",
-        storageBucket: "employee-access-system-c81cb.appspot.com",
-        messagingSenderId: "740345917289",
-        appId: "1:740345917289:web:7e8e74bce6811920cbd7f8"
-    };
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    console.log("Firebase initialized successfully");
-} catch (error) {
-    console.log("Firebase disabled, using local storage only");
-}
+console.log("Using local storage only - Firebase disabled");
 
 // ================= LOGIN =================
 function login(event){
