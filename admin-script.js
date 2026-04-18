@@ -78,8 +78,11 @@ async function createUser(event) {
     const fullname = document.getElementById("new-fullname").value;
     
     try {
-        // Send to backend
-        const response = await fetch("http://localhost:5000/admin/users", {
+        // Send to backend - works on both localhost and Vercel
+        const apiUrl = window.location.hostname === 'localhost' 
+            ? "http://localhost:5000/admin/users"
+            : "/admin/users";
+        const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -116,7 +119,11 @@ async function createUser(event) {
 // ================= LOAD USERS =================
 async function loadUsers() {
     try {
-        const response = await fetch("http://localhost:5000/admin/users");
+        // Works on both localhost and Vercel
+        const apiUrl = window.location.hostname === 'localhost' 
+            ? "http://localhost:5000/admin/users"
+            : "/admin/users";
+        const response = await fetch(apiUrl);
         const result = await response.json();
         
         if (response.ok) {
@@ -159,7 +166,11 @@ async function deleteUser(username) {
     }
     
     try {
-        const response = await fetch(`http://localhost:5000/admin/users/${username}`, {
+        // Works on both localhost and Vercel
+        const apiUrl = window.location.hostname === 'localhost' 
+            ? `http://localhost:5000/admin/users/${username}`
+            : `/admin/users/${username}`;
+        const response = await fetch(apiUrl, {
             method: "DELETE"
         });
         
@@ -181,16 +192,22 @@ async function deleteUser(username) {
 // ================= UPDATE STATS =================
 async function updateStats() {
     try {
-        // Get total users
-        const usersResponse = await fetch("http://localhost:5000/admin/users");
+        // Get total users - works on both localhost and Vercel
+        const usersApiUrl = window.location.hostname === 'localhost' 
+            ? "http://localhost:5000/admin/users"
+            : "/admin/users";
+        const usersResponse = await fetch(usersApiUrl);
         const usersResult = await usersResponse.json();
         
         if (usersResponse.ok) {
             document.getElementById("total-users").textContent = usersResult.users.length;
         }
         
-        // Get today's attendance
-        const attendanceResponse = await fetch("http://localhost:5000/attendance/today");
+        // Get today's attendance - works on both localhost and Vercel
+        const attendanceApiUrl = window.location.hostname === 'localhost' 
+            ? "http://localhost:5000/attendance/today"
+            : "/attendance/today";
+        const attendanceResponse = await fetch(attendanceApiUrl);
         const attendanceResult = await attendanceResponse.json();
         
         if (attendanceResponse.ok) {

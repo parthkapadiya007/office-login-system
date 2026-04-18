@@ -165,8 +165,11 @@ async function markIn(){
     const timestamp = new Date().toISOString();
 
     try {
-        // Save to backend server
-        const response = await fetch("http://localhost:5000/attendance",{
+        // Save to backend server - works on both localhost and Vercel
+        const apiUrl = window.location.hostname === 'localhost' 
+            ? "http://localhost:5000/attendance"
+            : "/attendance";
+        const response = await fetch(apiUrl,{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -244,8 +247,11 @@ async function markOut(){
     const timestamp = new Date().toISOString();
 
     try {
-        // Save to backend server
-        const response = await fetch("http://localhost:5000/attendance",{
+        // Save to backend server - works on both localhost and Vercel
+        const apiUrl = window.location.hostname === 'localhost' 
+            ? "http://localhost:5000/attendance"
+            : "/attendance";
+        const response = await fetch(apiUrl,{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
