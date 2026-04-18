@@ -3,21 +3,29 @@ const express = require("express");
 const cors = require("cors");
 const admin = require('firebase-admin');
 
-// Load Firebase service account from environment or file
-let serviceAccount;
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-} else {
-    serviceAccount = require('../firebase-key.json');
+// Initialize Firebase with error handling
+let db;
+try {
+    // Load Firebase service account from environment or file
+    let serviceAccount;
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } else {
+        serviceAccount = require('../firebase-key.json');
+    }
+
+    // Initialize Firebase Admin
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      databaseURL: process.env.FIREBASE_DATABASE_URL || "https://employee-access-system-c81cb-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    });
+
+    db = admin.database();
+    console.log("Firebase initialized successfully");
+} catch (error) {
+    console.log("Firebase initialization failed, using fallback mode:", error.message);
+    db = null;
 }
-
-// Initialize Firebase Admin
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL || "https://employee-access-system-c81cb-default-rtdb.asia-southeast1.firebasedatabase.app/"
-});
-
-const db = admin.database();
 
 const app = express();
 
@@ -71,6 +79,15 @@ app.post("/attendance", async (req,res)=>{
     const date = new Date().toISOString().split('T')[0];
 
     try {
+        // Check if Firebase is available
+        if (!db) {
+            console.log(`Attendance logged locally (Firebase not available): ${name} - ${type} - ${time}`);
+            return res.json({
+                message:"Attendance Logged Successfully (Local Mode)",
+                ip:userIP
+            });
+        }
+
         // Save to Firebase
         const attendanceRef = db.ref(`attendance/${date}`);
         const newAttendance = {
@@ -104,6 +121,15 @@ app.get("/attendance/:date", async (req,res)=>{
     const { date } = req.params;
     
     try {
+        // Check if Firebase is available
+        if (!db) {
+            return res.json({
+                date: date,
+                records: [],
+                message: "Firebase not available - Local mode"
+            });
+        }
+
         // Get attendance from Firebase
         const attendanceRef = db.ref(`attendance/${date}`);
         const snapshot = await attendanceRef.once('value');
@@ -130,6 +156,15 @@ app.get("/attendance/today", async (req,res)=>{
     const today = new Date().toISOString().split('T')[0];
     
     try {
+        // Check if Firebase is available
+        if (!db) {
+            return res.json({
+                date: today,
+                records: [],
+                message: "Firebase not available - Local mode"
+            });
+        }
+
         // Get today's attendance from Firebase
         const attendanceRef = db.ref(`attendance/${today}`);
         const snapshot = await attendanceRef.once('value');
@@ -156,6 +191,15 @@ app.get("/attendance/today", async (req,res)=>{
 // Get all users
 app.get("/admin/users", async (req, res) => {
     try {
+        // Check if Firebase is available
+        if (!db) {
+            return res.json({
+                users: [],
+                total: 0,
+                message: "Firebase not available - Local mode"
+            });
+        }
+
         const usersRef = db.ref("users");
         const snapshot = await usersRef.once('value');
         const data = snapshot.val() || {};
@@ -186,6 +230,15 @@ app.post("/admin/users", async (req, res) => {
         if (!username || !password) {
             return res.status(400).json({
                 message: "Username and password are required"
+            });
+        }
+        
+        // Check if Firebase is available
+        if (!db) {
+            console.log(`User created locally (Firebase not available): ${username}`);
+            return res.json({
+                message: "User created successfully (Local Mode)",
+                userId: "local_" + Date.now()
             });
         }
         
@@ -228,6 +281,14 @@ app.post("/admin/users", async (req, res) => {
 app.delete("/admin/users/:username", async (req, res) => {
     try {
         const { username } = req.params;
+        
+        // Check if Firebase is available
+        if (!db) {
+            console.log(`User deleted locally (Firebase not available): ${username}`);
+            return res.json({
+                message: "User deleted successfully (Local Mode)"
+            });
+        }
         
         // Find user by username
         const usersRef = db.ref("users");

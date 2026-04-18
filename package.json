@@ -1,17 +1,18 @@
 {
   "name": "office-login-system",
   "version": "1.0.0",
-  "description": "",
-  "main": "script.js",
+  "description": "Office Login System with Employee Management",
+  "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
     "dev": "start cmd /k \"npm run server\" && start cmd /k \"npm run frontend\"",
     "server": "node backend/server.js",
     "frontend": "npx serve . -l 3000",
+    "build": "echo 'Build completed'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["office", "login", "attendance", "employee"],
+  "author": "Parth Kapadiya",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
