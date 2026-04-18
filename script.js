@@ -77,8 +77,11 @@ if(window.location.pathname.includes("attendance.html")){
         window.location="index.html";
     }
 
-    document.getElementById("welcome").innerText =
-        "Welcome, " + employee;
+    // Check if DOM elements exist before accessing them
+    const welcomeEl = document.getElementById("welcome");
+    if(welcomeEl) {
+        welcomeEl.innerText = "Welcome, " + employee;
+    }
 
     startClock();
     loadAttendanceState();
@@ -101,8 +104,12 @@ function loadAttendanceState(){
     const outTime = localStorage.getItem("outTime");
     const status = localStorage.getItem("status");
 
-    document.getElementById("inTime").innerText = inTime || "--";
-    document.getElementById("outTime").innerText = outTime || "--";
+    // Check if DOM elements exist before accessing them
+    const inTimeEl = document.getElementById("inTime");
+    const outTimeEl = document.getElementById("outTime");
+    
+    if(inTimeEl) inTimeEl.innerText = inTime || "--";
+    if(outTimeEl) outTimeEl.innerText = outTime || "--";
 
     const inBtn = document.getElementById("inBtn");
     const outBtn = document.getElementById("outBtn");
@@ -125,8 +132,10 @@ function loadAttendanceState(){
 function startClock(){
     setInterval(()=>{
         const now = new Date();
-        document.getElementById("currentTime").innerText =
-            now.toLocaleString();
+        const timeEl = document.getElementById("currentTime");
+        if(timeEl) {
+            timeEl.innerText = now.toLocaleString();
+        }
     },1000);
 }
 
