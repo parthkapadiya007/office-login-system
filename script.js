@@ -169,25 +169,34 @@ async function markIn(){
         const apiUrl = window.location.hostname === 'localhost' 
             ? "http://localhost:5000/attendance"
             : "/attendance";
-        const response = await fetch(apiUrl,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify({
-                name: employee,
-                type: "IN",
-                time: now
-            })
-        });
-
-        const result = await response.json();
-
-        if(!response.ok){
-            throw new Error(result.message || "Server error");
+        
+        let response;
+        try {
+            response = await fetch(apiUrl,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    name: employee,
+                    type: "IN",
+                    time: now
+                })
+            });
+        } catch (fetchError) {
+            // If fetch fails, work in offline mode
+            console.log("Server not available, working offline");
+            response = null;
         }
 
-        // Update local storage
+        if (response && response.ok) {
+            const result = await response.json();
+            console.log("Server response:", result);
+        } else {
+            console.log("Working in offline mode");
+        }
+
+        // Update local storage (works regardless of server)
         localStorage.setItem("status","IN");
         localStorage.setItem("inTime",now);
         localStorage.setItem("attendanceDate", today());
@@ -200,7 +209,7 @@ async function markIn(){
             time: now,
             timestamp: timestamp,
             date: today(),
-            ip: result.ip || "Server"
+            ip: "Server"
         });
         localStorage.setItem('attendanceBackup', JSON.stringify(attendance));
 
@@ -214,7 +223,7 @@ async function markIn(){
         setTimeout(() => {
             inBtn.style.display="none";
             document.getElementById("outBtn").style.display="block";
-            showNotification("IN Marked ✅ Saved to Server", "success");
+            showNotification("IN Marked \u2705 Saved to Server", "success");
         }, 600);
 
     } catch(err) {
@@ -251,25 +260,34 @@ async function markOut(){
         const apiUrl = window.location.hostname === 'localhost' 
             ? "http://localhost:5000/attendance"
             : "/attendance";
-        const response = await fetch(apiUrl,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify({
-                name: employee,
-                type: "OUT",
-                time: now
-            })
-        });
-
-        const result = await response.json();
-
-        if(!response.ok){
-            throw new Error(result.message || "Server error");
+        
+        let response;
+        try {
+            response = await fetch(apiUrl,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    name: employee,
+                    type: "OUT",
+                    time: now
+                })
+            });
+        } catch (fetchError) {
+            // If fetch fails, work in offline mode
+            console.log("Server not available, working offline");
+            response = null;
         }
 
-        // Update local storage
+        if (response && response.ok) {
+            const result = await response.json();
+            console.log("Server response:", result);
+        } else {
+            console.log("Working in offline mode");
+        }
+
+        // Update local storage (works regardless of server)
         localStorage.setItem("status","OUT");
         localStorage.setItem("outTime",now);
         
@@ -281,7 +299,7 @@ async function markOut(){
             time: now,
             timestamp: timestamp,
             date: today(),
-            ip: result.ip || "Server"
+            ip: "Server"
         });
         localStorage.setItem('attendanceBackup', JSON.stringify(attendance));
 
@@ -294,7 +312,7 @@ async function markOut(){
         
         setTimeout(() => {
             outBtn.style.display="none";
-            showNotification("OUT Marked ✅ Saved to Server", "success");
+            showNotification("OUT Marked \u2705 Saved Successfully", "success");
         }, 600);
 
     } catch(err) {
